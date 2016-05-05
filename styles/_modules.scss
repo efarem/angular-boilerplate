@@ -1,0 +1,217 @@
+/*========================================
+
+	reuseable scss modules
+
+========================================*/
+
+body {
+	font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+	color: #5c5c5c;
+	padding: 50px;
+}
+
+.todo {
+	position: relative;
+	width: 350px;
+	margin: 0 auto;
+	padding: 0 0 12px;
+	background: #fff;
+	border: 1px solid;
+	border-color: #dfdcdc #d9d6d6 #ccc;
+	border-radius: 2px;
+	box-shadow: 0 1px 2px rgba(0, 0, 0, .1);
+
+	&::before,
+	&::after {
+		content: '';
+		position: absolute;
+		z-index: -1;
+		height: 4px;
+		background: #fff;
+		border: 1px solid #ccc;
+		border-radius: 2px;
+	}
+
+	&::before {
+		left: 2px;
+		right: 2px;
+		bottom: -5px;
+		border-color: #c4c4c4;
+		box-shadow: 0 1px 2px rgba(0, 0, 0, .15);
+	}
+
+	&::after {
+		left: 0;
+		right: 0;
+		bottom: -3px;
+		box-shadow: 0 1px 2px rgba(0, 0, 0, .1);
+	}
+
+	&__form {
+		padding: 0 0 0 40px;
+
+		input {
+			border: 0;
+			padding: 15px 10px;
+			outline: 0;
+			font-size: 16px;
+		}
+	}
+
+	&__remaining {
+		padding: 10px 15px 0 50px;
+		font-style: italic;
+		font-size: 12px;
+	}
+
+	&__list {
+		border-top: 1px solid #e6ebed;
+
+		&::before {
+			content: '';
+			width: 3px;
+			z-index: 2;
+			border: 1px solid #f2e3df;
+			border-width: 0 1px;
+			position: absolute;
+			top: 0;
+			bottom: 0;
+			left: 35px;
+		}
+
+		li {
+			position: relative;
+			padding: 0 15px 0 50px;
+			line-height: 21px;
+			font-size: 12px;
+			color: #8b8f97;
+			border-bottom: 1px solid #e6ebed;
+
+			a {
+				text-decoration: none;
+				color: #6bb3ca;
+				font-size: 22px;
+				cursor: pointer;
+				transition: opacity .2s ease-in-out;
+				opacity: 0;
+				position: absolute;
+				top: 8px;
+				right: 10px;
+			}
+
+			p,
+			input {
+				line-height: 40px;
+				margin: 0;
+				border: 0;
+				outline: 0;
+				width: 100%;
+			}
+
+			input {
+
+				&[type=checkbox] {
+					display: none;
+
+					&:checked + .toggle::after {
+						opacity: 1;
+					}
+				}
+			}
+
+			&:hover {
+
+				a {
+					opacity: 1;
+				}
+			}
+		}
+
+		.toggle {
+			display: block;
+			height: 35px;
+			width: 35px;
+			position: absolute;
+			top: 0;
+			bottom: 0;
+			left: 0;
+			text-indent: 100%;
+			overflow: hidden;
+			cursor: pointer;
+
+			&::before {
+				content: '';
+				width: 15px;
+				height: 15px;
+				background: #faf9f9;
+				border: 1px solid #6bb3ca;
+				border-radius: 2px;
+				position: absolute;
+				top: 9px;
+				left: 9px;
+				box-shadow: 0 1px 1px #dfecf4;
+			}
+
+			&::after {
+				content: '';
+				position: absolute;
+				width: 7px;
+				height: 3px;
+				background: transparent;
+				top: 14px;
+				left: 13px;
+				border: 2px solid #aaa;
+				border-top: 0;
+				border-right: 0;
+				transform: rotate(-45deg);
+				opacity: 0;
+			}
+
+			&:hover {
+
+				&::before {
+					box-shadow: 0 0 3px #6bb3ca;
+				}
+			}
+
+			.done .toggle::before,
+			.toggle:active::before {
+				border-color: #c0c0c0 #ccc #d8d8d8;
+				box-shadow: inset 0 1px rgba(0, 0, 0, .05),
+					inset 0 5px 5px rgba(0, 0, 0, .05);
+			}
+		}
+	}
+}
+
+.todo-controls {
+	margin: 0 15px 12px 50px;
+	height: 12px;
+
+	li {
+		float: left;
+
+		& + & {
+			margin-left: 10px;
+		}
+	}
+
+	a {
+		display: block;
+		margin: 0;
+		opacity: .6;
+
+		&:hover {
+			opacity: 1;
+		}
+	}
+
+	.right {
+		float: right;
+	}
+}
+
+.todo-pagination {
+	margin: 12px 12px 0 50px;
+	height: 22px;
+}

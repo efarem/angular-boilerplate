@@ -1,0 +1,52 @@
+<section class="todo">
+	<form class="todo__form" ng-submit="todo.addTodo();">
+		<input
+			type="type"
+			placeholder="Add new todo!"
+			ng-model="todo.newTodo"
+			ng-model-options="{
+				updateOn: 'default blur',
+				debounce: {
+					'default': 250,
+					'blur': 0
+				}
+			}">
+	</form>
+	<ul class="todo__list">
+		<li ng-repeat="item in todo.list track by $index">
+			<input
+				type="checkbox"
+				ng-model="item.completed"
+				ng-change="todo.toggleState(item);"
+				id="todo-{{$index}}">
+			<label for="todo-{{$index}}" class="toggle"></label>
+			<p ng-dblclick="showEditField = true;" ng-hide="showEditField">
+				{{item.title}}
+			</p>
+			<section ng-show="showEditField">
+				<input
+					type="text"
+					ng-model="item.title"
+					ng-model-options="{
+						updateOn: 'default blur',
+						debounce: {
+							'default': 250,
+							'blur': 0
+						}
+					}"
+					ng-blur="todo.updateTodo(item, $index); showEditField = false;">
+			</section>
+			<a href="" ng-click="todo.removeTodo(item, $index);">
+				&#215;
+			</a>
+		</li>
+	</ul>
+	<p class="todo__remaining">
+		<span ng-show="todo.getRemaining().length > 0">
+			You have <span ng-bind="todo.getRemaining().length"></span> of <span ng-bind="todo.list.length"></span> items todo!
+		</span>
+		<span ng-show="todo.getRemaining().length === 0">
+			You are super productive!
+		</span>
+	</p>
+</section>

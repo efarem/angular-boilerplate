@@ -1,0 +1,20 @@
+linters:
+    Indentation:
+        character: tab
+        width: 1
+    Comment:
+        enabled: false
+    SelectorDepth:
+        max_depth: 4
+    NestingDepth:
+        enabled: true
+        max_depth: 4
+        ignore_parent_selectors: false
+    PropertySortOrder:
+        enabled: false
+    PropertySpelling:
+        enabled: false
+    ImportantRule:
+        enabled: false
+    ColorVariable:
+        enabled: false
