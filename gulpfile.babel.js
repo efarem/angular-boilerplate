@@ -17,18 +17,20 @@
 
 ========================================*/
 
+'use-strict';
+
 // Dependencies
-var gulp = require('gulp'),
-	server = require('gulp-webserver'),
-	babel = require('gulp-babel'),
-	sass = require('gulp-sass'),
-	postcss = require('gulp-postcss'),
-	concat = require('gulp-concat'),
-	uglify = require('gulp-uglify'),
-	ngAnnotate = require('gulp-ng-annotate');
+const gulp = require('gulp');
+const server = require('gulp-webserver');
+const babel = require('gulp-babel');
+const sass = require('gulp-sass');
+const postcss = require('gulp-postcss');
+const concat = require('gulp-concat');
+const uglify = require('gulp-uglify');
+const ngAnnotate = require('gulp-ng-annotate');
 
 // PostCSS Processors
-var processors = [
+const processors = [
 	require('autoprefixer')({ browsers: ['last 2 versions', '> 5%', 'ie 6-8']  }), // Apply vendor prefixes
 	require('lost')(), // Lost Grid - https://github.com/corysimmons/lost
 	require('rucksack-css'), // Rucksack CSS Extenstions - https://simplaio.github.io/rucksack/
@@ -43,7 +45,7 @@ function handleError (error) {
 }
 
 // Bower components
-var components = [];
+const components = [];
 components.js = [
 	'angular/angular.js',
 	'angular-animate/angular-animate.js',
@@ -89,10 +91,9 @@ function scripts() {
 }
 
 // Build components
-
 function bowerComponents() {
 	if (components.js.length) {
-		components.js.forEach(function(component, i) {
+		components.js.forEach((component, i) => {
 			components.js[i] = 'bower_components/' + component;
 		});
 
@@ -104,7 +105,7 @@ function bowerComponents() {
 	}
 
 	if (components.css.length) {
-		components.css.forEach(function(component, i) {
+		components.css.forEach((component, i) => {
 			components.css[i] = 'bower_components/' + component;
 		});
 
