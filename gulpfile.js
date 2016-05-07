@@ -5,40 +5,27 @@
 	Prerequisites: npm, gulp, postcss
 
 	Setup:
-	- Configure the Browsersync options
 	- Install the node modules with "npm install"
-    - Install angular and its dependencies with "bower install"
-	- Run gulp and browser-sync with "gulp watch"
+	- Install angular and its dependencies with "bower install"
+	- Add correct Bower components path to components
 
 	Commands:
-	gulp watch		   Watch for file changes and perform the correct tasks
-	gulp styles		   Compiles scss and runs postcss processors
-	gulp scripts 	   Concats and minifys dev js into one file for prod
-    gulp components    Concats and minifys bower components js and scss into single seperate files for prod
+	gulp watch		   Runs 'gulp build' then starts server and watch for file changes
+	gulp build		   Compiles scss and js into minifyed files
 
 	Author : Ben Brown
 
 ========================================*/
 
-// Browsersync options
-var options = {
-	'browser-sync': true,
-	'domain': 'http://192.168.0.4:8080'
-};
-
-
 // Dependencies
 var gulp = require('gulp'),
+	server = require('gulp-webserver'),
+	babel = require('gulp-babel'),
 	sass = require('gulp-sass'),
 	postcss = require('gulp-postcss'),
 	concat = require('gulp-concat'),
 	uglify = require('gulp-uglify'),
-	ngAnnotate = require('gulp-ng-annotate'),
-	babel = require('gulp-babel');
-
-if (options['browser-sync']) {
-	var browserSync = require('browser-sync').create();
-}
+	ngAnnotate = require('gulp-ng-annotate');
 
 // PostCSS Processors
 var processors = [
@@ -66,71 +53,63 @@ components.css = [
 
 ];
 
-// Watch for style/script changes and sync browser if turned on
-gulp.task('watch', function() {
-	if (options['browser-sync']) {
-		browserSync.init({
-			proxy: options.domain
-		});
-	} else {
-		console.log('Not running browser-sync');
-	}
+gulp.task('build', gulp.series(scripts, bowerComponents, styles));
+gulp.task('watch', gulp.series(scripts, bowerComponents, styles, watch));
 
-	if (options['browser-sync']) {
-		gulp.watch('styles/*.scss', ['styles']).on('change', browserSync.reload);
-		gulp.watch('app/**/*.js', ['scripts']).on('change', browserSync.reload);
-		gulp.watch('bower_components/**/*', ['components']).on('change', browserSync.reload);
-		gulp.watch('**/*.html').on('change', browserSync.reload);
-	} else {
-		gulp.watch('styles/*.scss', ['styles']);
-		gulp.watch('app/**/*.js', ['scripts']);
-		gulp.watch('bower_components/**/*', ['components']);
-	}
-});
+// Watch for style/script changes
+function watch() {
+	gulp.watch('styles/*.scss', gulp.series(styles));
+	gulp.watch('app/**/*.js', gulp.series(scripts));
+	gulp.watch('bower_components/**/*', gulp.series(bowerComponents));
+	gulp.src('./')
+		.pipe(server({
+			livereload: true,
+			fallback: 'index.html'
+		}));
+}
 
 // Build styles
-gulp.task('styles', function() {
-	var build = gulp.src('styles/styles.scss')
+function styles() {
+	return gulp.src('styles/styles.scss')
 		.pipe(sass())
         .on('error', handleError)
 		.pipe(postcss(processors))
-		.pipe(gulp.dest('prod/styles'));
-
-	return build;
-});
+		.pipe(gulp.dest('dist/styles'));
+}
 
 // Build scripts
-gulp.task('scripts', function() {
+function scripts() {
 	return gulp.src('app/**/*.js')
 		.pipe(babel())
 		.pipe(concat('app.js'))
         .pipe(ngAnnotate())
         .on('error', handleError)
 		.pipe(uglify())
-		.pipe(gulp.dest('prod/scripts'));
-});
+		.pipe(gulp.dest('dist/scripts'));
+}
 
 // Build components
-gulp.task('components', ['components-js', 'components-css']);
 
-gulp.task('components-js', function() {
-	components.js.forEach(function(component, i) {
-		components.js[i] = 'bower_components/' + component;
-	});
+function bowerComponents() {
+	if (components.js.length) {
+		components.js.forEach(function(component, i) {
+			components.js[i] = 'bower_components/' + component;
+		});
 
-	return gulp.src(components.js)
-		.pipe(babel())
-        .pipe(concat('components.js'))
-        .pipe(uglify())
-        .pipe(gulp.dest('prod/scripts'));
-});
+		return gulp.src(components.js)
+			.pipe(babel())
+			.pipe(concat('components.js'))
+			.pipe(uglify())
+			.pipe(gulp.dest('dist/scripts'));
+	}
 
-gulp.task('components-css', function() {
-	components.css.forEach(function(component, i) {
-		components.css[i] = 'bower_components/' + component;
-	});
+	if (components.css.length) {
+		components.css.forEach(function(component, i) {
+			components.css[i] = 'bower_components/' + component;
+		});
 
-	return gulp.src(components.css)
-        .pipe(concat('components.css'))
-        .pipe(gulp.dest('prod/styles'));
-});
+		return gulp.src(components.css)
+			.pipe(concat('components.css'))
+			.pipe(gulp.dest('dist/styles'));
+	}
+}
