@@ -1,21 +1,17 @@
 function config($httpProvider, $compileProvider, $stateProvider, $urlRouterProvider, $locationProvider) {
-	$locationProvider.html5Mode(true);
+  $locationProvider.html5Mode(true);
 
-	$stateProvider
-		.state('index', {
-			url: '/',
-			templateUrl: 'app/views/index.html',
-			controller: todoCtrl,
-			controllerAs: 'todo'
-		});
+  $stateProvider
+    .state('index', {
+      url: '/',
+      template: '<todo-list></todo-list>',
+    });
 
-	$urlRouterProvider.otherwise('/');
-
-	$httpProvider.useApplyAsync(true);
-	$compileProvider.debugInfoEnabled(false);
-
+  $urlRouterProvider.otherwise('/');
+  $httpProvider.useApplyAsync(true);
+  $compileProvider.debugInfoEnabled(false);
 }
 
 angular
-	.module('todo-app')
-	.config(config);
+  .module('app')
+  .config(config);

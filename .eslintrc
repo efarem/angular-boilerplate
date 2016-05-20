@@ -1,0 +1,10 @@
+{
+  "extends": "airbnb-base",
+  "globals": {
+    "angular": 1
+  },
+  "rules": {
+    "no-undef": 0,
+    "max-len": 0
+  }
+}
