@@ -9,6 +9,7 @@ function todoCtrl(todoFactory) {
         this.list = response;
       });
   };
+  this.getTodos = getTodos;
 
   const addTodo = () => {
     if (!this.newTodo) {

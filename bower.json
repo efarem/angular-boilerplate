@@ -1,15 +1,16 @@
 {
-    "name": "Angular Boilerplate",
-    "version": "0.0.1",
-    "authors": [
-        "Ben Brown <ben@ben-brown.co>"
-    ],
-    "license": "MIT",
-    "dependencies": {
-        "angular": "latest",
-        "angular-animate": "latest",
-        "angular-ui-router": "latest"
-    },
-    "devDependencies": {
-    }
+  "name": "Angular Boilerplate",
+  "version": "0.0.1",
+  "authors": [
+    "Ben Brown <ben@ben-brown.co>"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "angular": "latest",
+    "angular-animate": "latest",
+    "angular-ui-router": "latest",
+  },
+  "devDependencies": {
+    "angular-mocks": "latest",
+  }
 }
