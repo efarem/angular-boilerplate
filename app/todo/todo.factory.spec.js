@@ -8,13 +8,10 @@ describe('todoFactory', () => {
   }));
 
   it('retrieve returns array of todos', () => {
-    $httpBackend
-      .when('GET', API)
-      .respond(200, mockTodos);
+    $httpBackend.when('GET', API).respond(200, mockTodos);
     todoFactory
       .retrieve()
       .then((response) => {
-        expect(response.length).toBeGreaterThan(0);
         for (let i = 0; i < response.length; i++) {
           expect(response[i].title).toBeDefined();
         }
