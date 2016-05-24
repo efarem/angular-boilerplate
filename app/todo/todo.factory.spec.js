@@ -18,4 +18,21 @@ describe('todoFactory', () => {
       });
     $httpBackend.flush();
   });
+
+  it('should return an updated array of todos', () => {
+    const data = mockTodos;
+    data.push({
+      completed: false,
+      id: 11,
+      title: 'delectus aut autem',
+      userId: 1,
+    });
+    $httpBackend.when('POST', API).respond(200, data);
+    todoFactory
+      .create()
+      .then((response) => {
+        expect(response.length).toBe(11);
+      });
+    $httpBackend.flush();
+  });
 });

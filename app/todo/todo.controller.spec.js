@@ -9,6 +9,9 @@ describe('todoCtrl', () => {
     remove() {
       return $q.when(0);
     },
+    update(todo) {
+      return $q.when(todo);
+    },
   };
 
   beforeEach(module('app'));
@@ -18,19 +21,17 @@ describe('todoCtrl', () => {
     $q = _$q_;
     ctrl = $controller('todoCtrl', { todoFactory: mockFactory });
 
-    $rootScope.$digest();
+    $rootScope.$apply();
   }));
 
   it('should have a populated list of todos', () => {
     expect(ctrl.list.length).toBeGreaterThan(0);
   });
 
-  it('todo should have title property', () => {
-    expect(ctrl.list[0].title).toBeDefined();
-  });
-
-  it('todo should have id property', () => {
-    expect(ctrl.list[0].id).toBeDefined();
+  it('todos should have title property', () => {
+    for (let i = 0; i < ctrl.list.length; i++) {
+      expect(ctrl.list[0].title).toBeDefined();
+    }
   });
 
   it('should display remaining todos that are uncompleted', () => {
@@ -41,14 +42,22 @@ describe('todoCtrl', () => {
     expect(ctrl.getRemaining().length).toBe(10);
     ctrl.newTodo = 'todo test title';
     ctrl.addTodo();
-    $rootScope.$digest();
+    $rootScope.$apply();
     expect(ctrl.getRemaining().length).toBe(11);
   });
 
   it('should remove todo from list', () => {
     expect(ctrl.getRemaining().length).toBe(11);
     ctrl.removeTodo();
-    $rootScope.$digest();
+    $rootScope.$apply();
     expect(ctrl.getRemaining().length).toBe(10);
+  });
+
+  it('should toggle the completed state of a todo', () => {
+    expect(ctrl.list[0].completed).toBe(false);
+    ctrl.list[0].completed = true;
+    ctrl.toggleState(ctrl.list[0]);
+    $rootScope.$apply();
+    expect(ctrl.list[0].completed).toBe(true);
   });
 });
