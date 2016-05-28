@@ -4,6 +4,7 @@
     "angular": 1
   },
   "rules": {
+    "no-param-reassign": 0,
     "no-undef": 0,
     "max-len": 0
   }

@@ -19,28 +19,36 @@
 
 'use-strict';
 
-// Dependencies
-const gulp = require('gulp');
-const server = require('gulp-webserver');
-const babel = require('gulp-babel');
-const sass = require('gulp-sass');
-const postcss = require('gulp-postcss');
-const concat = require('gulp-concat');
-const uglify = require('gulp-uglify');
-const ngAnnotate = require('gulp-ng-annotate');
+// Gulp Dependencies
+import gulp from 'gulp';
+import server from 'browser-sync';
+import babel from 'gulp-babel';
+import eslint from 'gulp-eslint';
+import sass from 'gulp-sass';
+import postcss from 'gulp-postcss';
+import concat from 'gulp-concat';
+import uglify from 'gulp-uglify';
+import ngAnnotate from 'gulp-ng-annotate';
+
+// PostCSS Dependencies
+import autoprefixer from 'autoprefixer';
+import lost from 'lost';
+import rucksack from 'rucksack-css';
+import cssnano from 'cssnano';
+import cssnext from 'cssnext';
 
 // PostCSS Processors
 const processors = [
-  require('autoprefixer')({ browsers: ['last 2 versions', '> 5%', 'ie 6-8'] }), // Apply vendor prefixes
-  require('lost')(), // Lost Grid - https://github.com/corysimmons/lost
-  require('rucksack-css'), // Rucksack CSS Extenstions - https://simplaio.github.io/rucksack/
-  require('cssnano')({ discardComments: { removeAll: true } }), // Minify CSS
-  require('cssnext')(), // Usable CSS4 features - http://cssnext.io/
+  autoprefixer({ browsers: ['last 2 versions', '> 5%', 'ie 6-8'] }), // Apply vendor prefixes
+  lost(), // Lost Grid - https://github.com/corysimmons/lost
+  rucksack(), // Rucksack CSS Extenstions - https://simplaio.github.io/rucksack/
+  cssnano({ discardComments: { removeAll: true } }), // Minify CSS
+  cssnext(), // Usable CSS4 features - http://cssnext.io/
 ];
 
 // Error handling
 function handleError(error) {
-  console.debug(error.toString());
+  console.error(error.toString());
   this.emit('end');
 }
 
@@ -59,18 +67,30 @@ components.css = [
 function styles() {
   return gulp.src('app/styles/styles.scss')
     .pipe(sass())
-        .on('error', handleError)
+      .on('error', handleError)
     .pipe(postcss(processors))
-    .pipe(gulp.dest('dist/styles'));
+    .pipe(gulp.dest('dist/styles'))
+    .pipe(server.stream());
+}
+
+// Lint scripts
+function lintScripts() {
+  return gulp.src(['app/**/*.js', '!app/test-helpers/*.js'])
+    .pipe(eslint())
+    .pipe(eslint.format())
+    .pipe(eslint.failAfterError());
 }
 
 // Build scripts
 function scripts() {
-  return gulp.src(['app/**/*.js', '!app/**/*.spec.js'])
+  return gulp.src(['app/**/*.js', '!app/test-helpers/*.js', '!app/**/*.spec.js'])
+    .pipe(eslint())
+    .pipe(eslint.format())
+    .pipe(eslint.failAfterError())
     .pipe(babel())
     .pipe(concat('app.js'))
-        .pipe(ngAnnotate())
-        .on('error', handleError)
+    .pipe(ngAnnotate())
+      .on('error', handleError)
     .pipe(uglify())
     .pipe(gulp.dest('dist/scripts'));
 }
@@ -79,7 +99,7 @@ function scripts() {
 function bowerComponents() {
   if (components.js.length) {
     components.js.forEach((component, i) => {
-      components.js[i] = 'bower_components/' + component;
+      components.js[i] = `bower_components/${component}`;
     });
 
     return gulp.src(components.js)
@@ -91,7 +111,7 @@ function bowerComponents() {
 
   if (components.css.length) {
     components.css.forEach((component, i) => {
-      components.css[i] = 'bower_components/' + component;
+      components.css[i] = `bower_components/${component}`;
     });
 
     return gulp.src(components.css)
@@ -102,16 +122,17 @@ function bowerComponents() {
 
 // Watch for style/script changes
 function watch() {
+  server.init({
+    server: {
+      baseDir: './',
+    },
+  });
+
   gulp.watch('app/styles/*.scss', gulp.series(styles));
-  gulp.watch('app/**/*.js', gulp.series(scripts));
+  gulp.watch('app/**/*.js', gulp.series(lintScripts, scripts, server.reload));
   gulp.watch('bower_components/**/*', gulp.series(bowerComponents));
-  gulp.src('./')
-    .pipe(server({
-      livereload: true,
-      fallback: 'index.html',
-    }));
 }
 
 // Gulp tasks
-gulp.task('build', gulp.series(scripts, bowerComponents, styles));
-gulp.task('watch', gulp.series(scripts, bowerComponents, styles, watch));
+gulp.task('build', gulp.series(lintScripts, scripts, bowerComponents, styles));
+gulp.task('watch', gulp.series(lintScripts, scripts, bowerComponents, styles, watch));
