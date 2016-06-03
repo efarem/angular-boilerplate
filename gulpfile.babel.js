@@ -22,13 +22,7 @@
 // Gulp Dependencies
 import gulp from 'gulp';
 import server from 'browser-sync';
-import babel from 'gulp-babel';
-import eslint from 'gulp-eslint';
-import sass from 'gulp-sass';
-import postcss from 'gulp-postcss';
-import concat from 'gulp-concat';
-import uglify from 'gulp-uglify';
-import ngAnnotate from 'gulp-ng-annotate';
+import gulpLoadPlugins from 'gulp-load-plugins';
 
 // PostCSS Dependencies
 import autoprefixer from 'autoprefixer';
@@ -36,6 +30,9 @@ import lost from 'lost';
 import rucksack from 'rucksack-css';
 import cssnano from 'cssnano';
 import cssnext from 'cssnext';
+
+// Load plugins
+const $ = gulpLoadPlugins();
 
 // PostCSS Processors
 const processors = [
@@ -66,9 +63,9 @@ components.css = [
 // Build styles
 function styles() {
   return gulp.src('app/styles/styles.scss')
-    .pipe(sass())
+    .pipe($.sass())
       .on('error', handleError)
-    .pipe(postcss(processors))
+    .pipe($.postcss(processors))
     .pipe(gulp.dest('dist/styles'))
     .pipe(server.stream());
 }
@@ -76,22 +73,22 @@ function styles() {
 // Lint scripts
 function lintScripts() {
   return gulp.src(['app/**/*.js', '!app/test-helpers/*.js'])
-    .pipe(eslint())
-    .pipe(eslint.format())
-    .pipe(eslint.failAfterError());
+    .pipe($.eslint())
+    .pipe($.eslint.format())
+    .pipe($.eslint.failAfterError());
 }
 
 // Build scripts
 function scripts() {
   return gulp.src(['app/**/*.js', '!app/test-helpers/*.js', '!app/**/*.spec.js'])
-    .pipe(eslint())
-    .pipe(eslint.format())
-    .pipe(eslint.failAfterError())
-    .pipe(babel())
-    .pipe(concat('app.js'))
-    .pipe(ngAnnotate())
+    .pipe($.eslint())
+    .pipe($.eslint.format())
+    .pipe($.eslint.failAfterError())
+    .pipe($.babel())
+    .pipe($.concat('app.js'))
+    .pipe($.ngAnnotate())
       .on('error', handleError)
-    .pipe(uglify())
+    .pipe($.uglify())
     .pipe(gulp.dest('dist/scripts'));
 }
 
@@ -103,9 +100,9 @@ function bowerComponents() {
     });
 
     return gulp.src(components.js)
-      .pipe(babel())
-      .pipe(concat('components.js'))
-      .pipe(uglify())
+      .pipe($.babel())
+      .pipe($.concat('components.js'))
+      .pipe($.uglify())
       .pipe(gulp.dest('dist/scripts'));
   }
 
@@ -115,7 +112,7 @@ function bowerComponents() {
     });
 
     return gulp.src(components.css)
-      .pipe(concat('components.css'))
+      .pipe($.concat('components.css'))
       .pipe(gulp.dest('dist/styles'));
   }
 }

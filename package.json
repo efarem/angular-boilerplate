@@ -28,6 +28,7 @@
     "gulp-babel": "latest",
     "gulp-concat": "latest",
     "gulp-eslint": "^2.0.0",
+    "gulp-load-plugins": "^1.2.4",
     "gulp-ng-annotate": "latest",
     "gulp-postcss": "latest",
     "gulp-sass": "latest",
